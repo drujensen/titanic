@@ -34,9 +34,6 @@ while (csv.next)
   actual << age
 end
 
-normalized = SHAInet::TrainingData.new(inputs, outputs)
-normalized.normalize_min_max
-
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
 model.load_from_file("./model/age.nn")
@@ -44,7 +41,7 @@ model.load_from_file("./model/age.nn")
 t = f = 0
 
 # determine accuracy
-normalized.normalized_inputs.each_with_index do |test, idx|
+inputs.each_with_index do |test, idx|
   results = model.run(test)
   max, max_idx = 0, 0
   results.each_with_index do |r, i|

@@ -29,13 +29,12 @@ while (csv.next)
 
   if csv.row["Age"] == ""
     pred_age_params = Array(Float64).new
-    pred_age_params << csv.row["Survived"].to_f64
-    pred_age_params << csv.row["Pclass"].to_f64
+    pred_age_params << (csv.row["Pclass"].to_f64 / 3_f64)
     pred_age_params << (csv.row["Sex"] == "male" ? 0_f64 : 1_f64)
-    pred_age_params << csv.row["SibSp"].to_f64
-    pred_age_params << csv.row["Parch"].to_f64
-    pred_age_params << csv.row["Fare"].to_f64
-    pred_age_params << (["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64)
+    pred_age_params << (csv.row["SibSp"].to_f64 / 8_f64)
+    pred_age_params << (csv.row["Parch"].to_f64 / 6_f64)
+    pred_age_params << (csv.row["Fare"].to_f64 / 512_f64)
+    pred_age_params << ((["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64) / 3_f64)
     pred_age = age_model.run(pred_age_params)
     max, age = 0, 0
     pred_age.each_with_index do |r, i|
@@ -54,7 +53,7 @@ while (csv.next)
   row_arr << csv.row["Parch"].to_f64
   row_arr << csv.row["Fare"].to_f64
   row_arr << (["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64)
-  
+
   inputs << row_arr
   outputs << outcome[csv.row["Survived"]]
 end
@@ -65,17 +64,24 @@ normalized.normalize_min_max
 
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
-model.add_layer(:input, 7, "memory", SHAInet.sigmoid)
-model.add_layer(:hidden, 14, "memory", SHAInet.sigmoid)
-model.add_layer(:output, 2, "memory", SHAInet.sigmoid)
-model.fully_connect
+model.add_layer(:input, 7, :memory, SHAInet.sigmoid)
+model.add_layer(:hidden, 5, :memory, SHAInet.sigmoid)
+model.add_layer(:hidden, 1, :eraser, SHAInet.sigmoid)
+model.add_layer(:output, 2, :memory, SHAInet.sigmoid)
 
-# params for sgdm
+# connect layers
+model.connect_ltl(model.input_layers[0], model.hidden_layers[0], :full)
+model.connect_ltl(model.input_layers[0], model.hidden_layers[1], :full)
+
+model.connect_ltl(model.hidden_layers[0], model.output_layers[0], :full)
+model.connect_ltl(model.hidden_layers[1], model.output_layers[0], :full)
+
+# optimization settings
 model.learning_rate = 0.001
 model.momentum = 0.001
 
 # train the network
-model.train(normalized.data.shuffle, :sgdm, :mse, epoch = 30000, threshold = -1.0, log = 100)
+model.train_batch(normalized.data.shuffle, :adam, :mse, epoch = 30000, threshold = 0.0000001, log = 1000, batch_size = 50)
 model.save_to_file("./model/titanic.nn")
 
 tn = tp = fn = fp = 0

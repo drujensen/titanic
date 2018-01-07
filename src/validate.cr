@@ -4,7 +4,6 @@ require "shainet"
 # train the network
 age_model : SHAInet::Network = SHAInet::Network.new
 age_model.load_from_file("./model/age.nn")
-age_model.fully_connect
 
 outcome = {
   "0" => [1_f64, 0_f64],
@@ -31,12 +30,12 @@ while (csv.next)
   if csv.row["Age"] == ""
     pred_age_params = Array(Float64).new
     pred_age_params << csv.row["Survived"].to_f64
-    pred_age_params << csv.row["Pclass"].to_f64
+    pred_age_params << (csv.row["Pclass"].to_f64 / 3_f64)
     pred_age_params << (csv.row["Sex"] == "male" ? 0_f64 : 1_f64)
-    pred_age_params << csv.row["SibSp"].to_f64
-    pred_age_params << csv.row["Parch"].to_f64
-    pred_age_params << csv.row["Fare"].to_f64
-    pred_age_params << (["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64)
+    pred_age_params << (csv.row["SibSp"].to_f64 / 8_f64)
+    pred_age_params << (csv.row["Parch"].to_f64 / 6_f64)
+    pred_age_params << (csv.row["Fare"].to_f64 / 512_f64)
+    pred_age_params << ((["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64) / 3_f64)
     pred_age = age_model.run(pred_age_params)
     max, age = 0, 0
     pred_age.each_with_index do |r, i|
@@ -67,7 +66,6 @@ normalized.normalize_min_max
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
 model.load_from_file("./model/titanic.nn")
-model.fully_connect
 
 tn = tp = fn = fp = 0
 

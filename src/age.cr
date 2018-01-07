@@ -4,8 +4,6 @@ require "shainet"
 raw = File.read("./data/train.csv")
 csv = CSV.new(raw, headers: true)
 
-headers = ["Survived", "Pclass", "Sex", "SibSp", "Parch", "Fare", "Embarked"]
-
 inputs = Array(Array(Float64)).new
 outputs = Array(Array(Float64)).new
 actual = Array(Int32).new
@@ -21,7 +19,6 @@ end
 while (csv.next)
   next if csv.row["Age"] == ""
   row_arr = Array(Float64).new
-  row_arr << csv.row["Survived"].to_f64
   row_arr << csv.row["Pclass"].to_f64
   row_arr << (csv.row["Sex"] == "male" ? 0_f64 : 1_f64)
   row_arr << csv.row["SibSp"].to_f64
@@ -39,17 +36,16 @@ normalized.normalize_min_max
 
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
-model.add_layer(:input, 7, "memory", SHAInet.sigmoid)
-model.add_layer(:hidden, 100, "memory", SHAInet.sigmoid)
+model.add_layer(:input, 6, "memory", SHAInet.sigmoid)
+model.add_layer(:hidden, 54, "memory", SHAInet.sigmoid)
 model.add_layer(:output, 100, "memory", SHAInet.sigmoid)
 model.fully_connect
 
-# params for sgdm
-model.learning_rate = 0.001
-model.momentum = 0.001
+model.learning_rate = 0.01
+model.momentum = 0.01
 
 # train the network
-model.train(normalized.data.shuffle, :sgdm, :mse, epoch = 5000, threshold = -1.0, log = 10)
+model.train_batch(normalized.data.shuffle, :adam, :c_ent, epoch = 1000, threshold = 0.0000001, log = 100, batch_size = 100)
 model.save_to_file("./model/age.nn")
 
 t = f = 0

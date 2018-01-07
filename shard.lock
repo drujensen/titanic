@@ -6,5 +6,5 @@ shards:
 
   shainet:
     github: NeuraLegion/shainet
-    commit: db9746e97d839bd4caa14beb7ad8eb2c73bc4915
+    commit: 49f8838bba6b3b3b0d8328777d683583ee37c151
 

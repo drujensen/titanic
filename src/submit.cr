@@ -24,13 +24,12 @@ while (csv.next)
 
   if csv.row["Age"] == ""
     pred_age_params = Array(Float64).new
-    pred_age_params << 1_f64
-    pred_age_params << csv.row["Pclass"].to_f64
+    pred_age_params << (csv.row["Pclass"].to_f64 / 3_f64)
     pred_age_params << (csv.row["Sex"] == "male" ? 0_f64 : 1_f64)
-    pred_age_params << csv.row["SibSp"].to_f64
-    pred_age_params << csv.row["Parch"].to_f64
-    pred_age_params << csv.row["Fare"].to_f64
-    pred_age_params << (["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64)
+    pred_age_params << (csv.row["SibSp"].to_f64 / 8_f64)
+    pred_age_params << (csv.row["Parch"].to_f64 / 6_f64)
+    pred_age_params << (csv.row["Fare"].to_f64 / 512_f64)
+    pred_age_params << ((["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64) / 3_f64)
     pred_age = age_model.run(pred_age_params)
     max, age = 0, 0
     pred_age.each_with_index do |r, i|
@@ -74,4 +73,4 @@ result = CSV.build do |csv|
     end
   end
 end
-puts result
+File.write("results.csv", result)
