@@ -1,5 +1,6 @@
 require "csv"
 require "shainet"
+require "./helpers.cr"
 
 raw = File.read("./data/train.csv")
 csv = CSV.new(raw, headers: true)
@@ -19,14 +20,16 @@ end
 while (csv.next)
   next if csv.row["Age"] == ""
   row_arr = Array(Float64).new
+  row_arr << salutations(csv.row["Name"]).to_f64
   row_arr << csv.row["Pclass"].to_f64
   row_arr << (csv.row["Sex"] == "male" ? 0_f64 : 1_f64)
   row_arr << csv.row["SibSp"].to_f64
   row_arr << csv.row["Parch"].to_f64
   row_arr << csv.row["Fare"].to_f64
-  row_arr << (["", "S", "C", "Q"].index(csv.row["Embarked"]).not_nil!.to_f64)
-  age = csv.row["Age"].split(".")[0].to_i
+  row_arr << embarked(row["Embarked"]).to_f64
   inputs << row_arr
+
+  age = csv.row["Age"].split(".")[0].to_i
   outputs << outcome[age]
   actual << age
 end
@@ -36,7 +39,7 @@ normalized.normalize_min_max
 
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
-model.add_layer(:input, 6, "memory", SHAInet.sigmoid)
+model.add_layer(:input, 7, "memory", SHAInet.sigmoid)
 model.add_layer(:hidden, 54, "memory", SHAInet.sigmoid)
 model.add_layer(:output, 100, "memory", SHAInet.sigmoid)
 model.fully_connect
