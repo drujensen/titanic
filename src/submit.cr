@@ -20,10 +20,10 @@ while (csv.next)
   row_arr << salutations(csv.row["Name"]).to_f64
   row_arr << csv.row["Pclass"].to_f64
   row_arr << (csv.row["Sex"] == "male" ? 0_f64 : 1_f64)
-  row_arr << age(cvs.row).to_f64
+  row_arr << age(age_model, csv.row).to_f64
   row_arr << csv.row["SibSp"].to_f64
   row_arr << csv.row["Parch"].to_f64
-  row_arr << csv.row["Fare"].to_f64
+  row_arr << (csv.row["Fare"] != "" ? csv.row["Fare"].to_f64 : 0_f64)
   row_arr << embarked(csv.row["Embarked"]).to_f64
   inputs << row_arr
   ids << csv.row["PassengerId"].to_i32

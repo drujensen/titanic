@@ -22,14 +22,14 @@ csv = CSV.new(raw, headers: true)
 # load the data structures
 while (csv.next)
   row_arr = Array(Float64).new
-  row_arr << (salutations(csv.row["Name"]) / 6_f64)
+  row_arr << salutations(csv.row["Name"]).to_f64
   row_arr << csv.row["Pclass"].to_f64
   row_arr << (csv.row["Sex"] == "male" ? 0_f64 : 1_f64)
-  row_arr << age(cvs.row).to_f64
+  row_arr << age(age_model, csv.row).to_f64
   row_arr << csv.row["SibSp"].to_f64
   row_arr << csv.row["Parch"].to_f64
   row_arr << csv.row["Fare"].to_f64
-  row_arr << (embarked(csv.row["Embarked"]) / 3_f64)
+  row_arr << embarked(csv.row["Embarked"]).to_f64
   inputs << row_arr
   outputs << outcome[csv.row["Survived"]]
 end
@@ -40,10 +40,11 @@ normalized.normalize_min_max
 
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
-model.add_layer(:input, 8, :memory, SHAInet.sigmoid)
-model.add_layer(:hidden, 6, :memory, SHAInet.sigmoid)
-model.add_layer(:hidden, 1, :eraser, SHAInet.sigmoid)
+model.add_layer(:input, 8, :memory, SHAInet.relu)
+model.add_layer(:hidden, 7, :memory, SHAInet.relu)
+model.add_layer(:hidden, 1, :eraser, SHAInet.relu)
 model.add_layer(:output, 2, :memory, SHAInet.sigmoid)
+#model.fully_connect
 
 # connect layers
 model.connect_ltl(model.input_layers[0], model.hidden_layers[0], :full)
@@ -57,7 +58,7 @@ model.learning_rate = 0.001
 model.momentum = 0.001
 
 # train the network
-model.train_batch(normalized.data.shuffle, :adam, :c_ent, epoch = 30000, threshold = 0.0000001, log = 1000, batch_size = 50)
+model.train_batch(normalized.data.shuffle, :adam, :mse, epoch = 30000, threshold = 0.0000001, log = 1000, batch_size = 50)
 model.save_to_file("./model/titanic.nn")
 
 tn = tp = fn = fp = 0

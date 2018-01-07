@@ -22,19 +22,19 @@ def embarked(name)
   index || 0
 end
 
-def age(row)
+def age(model, row)
   age = row["Age"]
   return age.to_f64 unless age == ""
 
   pred_age_params = Array(Float64).new
   pred_age_params << (salutations(row["Name"]) / 6_f64)
-  pred_age_params << (row["Pclass"] / 3_f64)
+  pred_age_params << (row["Pclass"].to_i / 3_f64)
   pred_age_params << (row["Sex"] == "male" ? 0_f64 : 1_f64)
-  pred_age_params << (row["SibSp"] / 8_f64)
-  pred_age_params << (row["Parch"] / 6_f64)
-  pred_age_params << (row["Fare"] / 512_f64)
+  pred_age_params << (row["SibSp"].to_i / 8_f64)
+  pred_age_params << (row["Parch"].to_i / 6_f64)
+  pred_age_params << (row["Fare"].to_f / 512_f64)
   pred_age_params << (embarked(row["Embarked"]) / 3_f64)
-  pred_age = age_model.run(pred_age_params)
+  pred_age = model.run(pred_age_params)
 
   max, age = 0, 0
   pred_age.each_with_index do |r, i|

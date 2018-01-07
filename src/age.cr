@@ -26,7 +26,7 @@ while (csv.next)
   row_arr << csv.row["SibSp"].to_f64
   row_arr << csv.row["Parch"].to_f64
   row_arr << csv.row["Fare"].to_f64
-  row_arr << embarked(row["Embarked"]).to_f64
+  row_arr << embarked(csv.row["Embarked"]).to_f64
   inputs << row_arr
 
   age = csv.row["Age"].split(".")[0].to_i
