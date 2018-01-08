@@ -49,7 +49,7 @@ model.momentum = 0.01
 
 # train the network
 model.train_batch(normalized.data.shuffle, :adam, :c_ent, epoch = 1000, threshold = 0.0000001, log = 100, batch_size = 100)
-model.save_to_file("./model/age.nn")
+model.save_to_file("./network/age.nn")
 
 t = f = 0
 

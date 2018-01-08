@@ -3,7 +3,7 @@ require "shainet"
 
 # train the network
 age_model : SHAInet::Network = SHAInet::Network.new
-age_model.load_from_file("./model/age.nn")
+age_model.load_from_file("./network/age.nn")
 
 outcome = {
   "0" => [1_f64, 0_f64],
@@ -65,7 +65,7 @@ normalized.normalize_min_max
 
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
-model.load_from_file("./model/titanic.nn")
+model.load_from_file("./network/titanic.nn")
 
 tn = tp = fn = fp = 0
 

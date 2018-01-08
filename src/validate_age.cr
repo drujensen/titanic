@@ -36,7 +36,7 @@ end
 
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
-model.load_from_file("./model/age.nn")
+model.load_from_file("./network/age.nn")
 
 t = f = 0
 

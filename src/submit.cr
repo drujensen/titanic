@@ -3,7 +3,7 @@ require "shainet"
 require "./helpers.cr"
 
 age_model : SHAInet::Network = SHAInet::Network.new
-age_model.load_from_file("./model/age.nn")
+age_model.load_from_file("./network/age.nn")
 
 # data structures to hold the input and results
 inputs = Array(Array(Float64)).new
@@ -35,7 +35,7 @@ normalized.normalize_min_max
 
 # load model
 model : SHAInet::Network = SHAInet::Network.new
-model.load_from_file("./model/titanic.nn")
+model.load_from_file("./network/titanic.nn")
 
 result = CSV.build do |csv|
   csv.row "PassengerId", "Survived"

@@ -4,7 +4,7 @@ require "./helpers.cr"
 
 # train the network
 age_model : SHAInet::Network = SHAInet::Network.new
-age_model.load_from_file("./model/age.nn")
+age_model.load_from_file("./network/age.nn")
 
 outcome = {
   "0" => [1_f64, 0_f64],
@@ -44,7 +44,7 @@ model.add_layer(:input, 8, :memory, SHAInet.relu)
 model.add_layer(:hidden, 7, :memory, SHAInet.relu)
 model.add_layer(:hidden, 1, :eraser, SHAInet.relu)
 model.add_layer(:output, 2, :memory, SHAInet.sigmoid)
-#model.fully_connect
+# model.fully_connect
 
 # connect layers
 model.connect_ltl(model.input_layers[0], model.hidden_layers[0], :full)
@@ -59,7 +59,7 @@ model.momentum = 0.001
 
 # train the network
 model.train_batch(normalized.data.shuffle, :adam, :mse, epoch = 30000, threshold = 0.0000001, log = 1000, batch_size = 50)
-model.save_to_file("./model/titanic.nn")
+model.save_to_file("./network/titanic.nn")
 
 tn = tp = fn = fp = 0
 
