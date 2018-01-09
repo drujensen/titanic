@@ -10,9 +10,9 @@ outputs = Array(Array(Float64)).new
 actual = Array(Int32).new
 
 outcome = Hash(Int32, Array(Float64)).new
-(0..99).each do |idx|
+(0..80).each do |idx|
   outcome[idx] = Array(Float64).new
-  (0..99).each do |pos|
+  (0..80).each do |pos|
     outcome[idx] << (pos == idx ? 1_f64 : 0_f64)
   end
 end
@@ -40,15 +40,15 @@ normalized.normalize_min_max
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
 model.add_layer(:input, 7, "memory", SHAInet.sigmoid)
-model.add_layer(:hidden, 54, "memory", SHAInet.sigmoid)
-model.add_layer(:output, 100, "memory", SHAInet.sigmoid)
+model.add_layer(:hidden, 40, "memory", SHAInet.sigmoid)
+model.add_layer(:output, 81, "memory", SHAInet.sigmoid)
 model.fully_connect
 
 model.learning_rate = 0.01
 model.momentum = 0.01
 
 # train the network
-model.train_batch(normalized.data.shuffle, :adam, :c_ent, epoch = 1000, threshold = 0.0000001, log = 100, batch_size = 100)
+model.train_batch(normalized.data.shuffle, :adam, :mse, epoch = 10000, threshold = 0.0000001, log = 100, batch_size = 50)
 model.save_to_file("./network/age.nn")
 
 t = f = 0

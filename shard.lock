@@ -1,10 +1,6 @@
 version: 1.0
 shards:
-  cannon:
-    github: Papierkorb/cannon
-    version: 0.2.1
-
   shainet:
     github: NeuraLegion/shainet
-    commit: 49f8838bba6b3b3b0d8328777d683583ee37c151
+    commit: 0f57f1588a63b56a0ff4526343d198729e27427c
 
