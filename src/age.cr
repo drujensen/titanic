@@ -10,9 +10,9 @@ outputs = Array(Array(Float64)).new
 actual = Array(Int32).new
 
 outcome = Hash(Int32, Array(Float64)).new
-(0..80).each do |idx|
+(0..7).each do |idx|
   outcome[idx] = Array(Float64).new
-  (0..80).each do |pos|
+  (0..7).each do |pos|
     outcome[idx] << (pos == idx ? 1_f64 : 0_f64)
   end
 end
@@ -29,7 +29,8 @@ while (csv.next)
   row_arr << embarked(csv.row["Embarked"]).to_f64
   inputs << row_arr
 
-  age = csv.row["Age"].split(".")[0].to_i
+  age = (csv.row["Age"].split(".")[0].to_i * 0.1).to_i
+  age = 7 if age == 8
   outputs << outcome[age]
   actual << age
 end
@@ -40,15 +41,15 @@ normalized.normalize_min_max
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
 model.add_layer(:input, 7, "memory", SHAInet.sigmoid)
-model.add_layer(:hidden, 40, "memory", SHAInet.sigmoid)
-model.add_layer(:output, 81, "memory", SHAInet.sigmoid)
+model.add_layer(:hidden, 8, "memory", SHAInet.sigmoid)
+model.add_layer(:output, 8, "memory", SHAInet.sigmoid)
 model.fully_connect
 
 model.learning_rate = 0.01
 model.momentum = 0.01
 
 # train the network
-model.train_batch(normalized.data.shuffle, :adam, :mse, epoch = 10000, threshold = 0.0000001, log = 100, batch_size = 50)
+model.train_batch(normalized.data.shuffle, :adam, :mse, epoch = 30000, threshold = 0.0000001, log = 100, batch_size = 50)
 model.save_to_file("./network/age.nn")
 
 t = f = 0

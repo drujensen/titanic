@@ -41,17 +41,17 @@ normalized.normalize_min_max
 # create a network
 model : SHAInet::Network = SHAInet::Network.new
 model.add_layer(:input, 8, :memory, SHAInet.relu)
-model.add_layer(:hidden, 7, :memory, SHAInet.relu)
-model.add_layer(:hidden, 1, :eraser, SHAInet.relu)
+model.add_layer(:hidden, 8, :memory, SHAInet.relu)
+#model.add_layer(:hidden, 1, :eraser, SHAInet.relu)
 model.add_layer(:output, 2, :memory, SHAInet.sigmoid)
-# model.fully_connect
+model.fully_connect
 
 # connect layers
-model.connect_ltl(model.input_layers[0], model.hidden_layers[0], :full)
-model.connect_ltl(model.input_layers[0], model.hidden_layers[1], :full)
+#model.connect_ltl(model.input_layers[0], model.hidden_layers[0], :full)
+#model.connect_ltl(model.input_layers[0], model.hidden_layers[1], :full)
 
-model.connect_ltl(model.hidden_layers[0], model.output_layers[0], :full)
-model.connect_ltl(model.hidden_layers[1], model.output_layers[0], :full)
+#model.connect_ltl(model.hidden_layers[0], model.output_layers[0], :full)
+#model.connect_ltl(model.hidden_layers[1], model.output_layers[0], :full)
 
 # optimization settings
 model.learning_rate = 0.001

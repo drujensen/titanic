@@ -23,8 +23,8 @@ def embarked(name)
 end
 
 def age(model, row)
-  age = row["Age"]
-  return age.to_f64 unless age == ""
+  age_str = row["Age"]
+  return age_str.to_f64 unless age_str == ""
 
   pred_age_params = Array(Float64).new
   pred_age_params << (salutations(row["Name"]) / 6_f64)
@@ -36,13 +36,15 @@ def age(model, row)
   pred_age_params << (embarked(row["Embarked"]) / 3_f64)
   pred_age = model.run(pred_age_params)
 
-  max, age = 0, 0
+  max, idx = 0, 0
   pred_age.each_with_index do |r, i|
     if r > max
       max = r
-      age = i
+      idx = i
     end
   end
 
+  age = ((idx * 10) + 5)
+  puts "predicted: #{age}"
   age.to_f64
 end
